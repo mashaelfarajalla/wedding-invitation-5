@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دعوة زفاف</title>
+<meta name="description" content="بكل فرح ندعوكم لمشاركتنا حفل زفافنا">
+<meta property="og:title" content="دعوة زفاف">
+<meta property="og:description" content="بكل فرح ندعوكم لمشاركتنا حفل زفافنا">
+<meta name="theme-color" content="#f1e0db">
+<link rel="preload" as="image" href="assets/envelope-body.jpg" media="(min-aspect-ratio: 3/4)">
+<link rel="preload" as="image" href="assets/envelope-flap.png" media="(min-aspect-ratio: 3/4)">
+<link rel="preload" as="image" href="assets/envelope-body-m.jpg" media="(max-aspect-ratio: 3/4)">
+<link rel="preload" as="image" href="assets/envelope-flap-m.png" media="(max-aspect-ratio: 3/4)">
+<link rel="preload" as="image" href="assets/seal-rose.png">
+<link rel="preload" as="image" href="assets/paper.jpg">
+<link rel="preload" as="image" href="assets/flower-top.png">
+<link rel="preload" as="image" href="assets/flower-bottom.png">
+<link href="assets/fonts/fonts.css" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#fbf6f0;
+    --paper:#fffdf9;
+    --blush:#f3e4e2;
+    --rose:#c4596f;
+    --rose-2:#d98a9a;
+    --rose-d:#8e3348;
+    --wine:#5c1f2e;
+    --ink:#4a2b31;
+    --muted:#8a6a6f;
+    --gold:#c9a25e;
+    --gold-2:#ecd49c;
+    --gold-dark:#9c7a3c;
+    --line:rgba(142,51,72,.15);
+    --bg:#f7ece7;               /* one warm blush tone shared by the whole page */
+    --bg-tint:rgba(248,237,232,.78);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Tajawal',sans-serif;
+    background:#f1e0db;
+    color:var(--ink);
+    overflow-x:hidden;
+    line-height:1.8;
+  }
+  body.locked{overflow:hidden;height:100vh}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  .wrap{max-width:560px;margin:0 auto;position:relative}
+
+
+  /* ================= INTRO: envelope (photo layers) ================= */
+  #intro{
+    position:fixed;inset:0;z-index:50;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 45%,rgba(255,255,255,.7),transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 50%,transparent 50%,rgba(142,51,72,.18)),
+      #f1e0db;
+    transition:opacity 1.4s ease, visibility 0s 1.4s;
+  }
+  /* blurred, semi-transparent photo of the envelope as the backdrop */
+  #intro::before{
+    content:"";position:absolute;inset:-40px;z-index:0;pointer-events:none;
+    background:url("assets/envelope-body.jpg") center/cover no-repeat;
+    filter:blur(26px) saturate(1.1);
+    opacity:.55;
+  }
+  #intro::after{ /* soft light in the middle + darker edges so the envelope stands out */
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 48%,rgba(255,255,255,.45),transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 50%,transparent 45%,rgba(92,31,46,.22));
+  }
+  /* floral corners: the clean bottom-right sprig of the envelope photo, rotated for the top-left
+     (the photo's own top-left corner has a smudge + flap shadow). "darken" keeps the leaves'
+     original colours while the paper, close to the backdrop, disappears into it. */
+  .leaf{
+    position:absolute;z-index:0;pointer-events:none;
+    width:clamp(170px,30vw,400px);aspect-ratio:340/370;
+    background:url("assets/envelope-body.jpg") 100% 100%/353% auto no-repeat;
+    mix-blend-mode:darken;
+    -webkit-mask-image:radial-gradient(ellipse 110% 110% at 100% 100%,#000 65%,transparent 95%);
+            mask-image:radial-gradient(ellipse 110% 110% at 100% 100%,#000 65%,transparent 95%);
+    animation:leafIn 1.6s .3s ease both;
+  }
+  .leaf.br{bottom:0;right:0}
+  .leaf.tl{top:0;left:0;transform:rotate(180deg)}
+  @keyframes leafIn{from{opacity:0}}
+  #intro.gone{opacity:0;visibility:hidden}
+  .env-stage{display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:1}
+  .envelope{
+    position:relative;
+    width:min(94vw,560px);
+    aspect-ratio:1200/800;
+    perspective:1600px;
+    /* clip at the envelope's top/sides so the lifting flap slides out of the envelope's own edge
+       (like the phone, where the screen edge hides it) instead of floating detached above it;
+       the extra room on the sides/bottom keeps the drop shadow */
+    clip-path:inset(0 -40px -80px -40px);
+    transition:transform 1.1s cubic-bezier(.5,0,.2,1);
+    animation:envIn 1.2s cubic-bezier(.2,.8,.2,1) backwards;
+  }
+  .env-body,.env-flap,.env-flap img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none}
+  .env-body{z-index:3;border-radius:6px;box-shadow:0 30px 50px -22px rgba(92,31,46,.45),0 2px 6px rgba(92,31,46,.12)}
+  .env-flap{z-index:5;transform-origin:50% 0;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.45,0,.2,1)}
+  .env-flap img{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .env-flap .in{transform:rotateY(180deg);filter:brightness(.88)} /* inner face: stays hinged at the top edge once the flap flips */
+  .env-body,.env-flap{transition:transform 1s cubic-bezier(.45,0,.2,1),opacity .8s ease}
+
+  /* real wax seal (single PNG) */
+  .seal{
+    position:absolute;z-index:6;left:50.52%;top:46.68%;width:20.5%;aspect-ratio:1;
+    transform:translate(-50%,-50%) translateZ(1px);-webkit-tap-highlight-color:transparent;
+    pointer-events:auto;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    animation:sealPulse 2.4s ease-in-out infinite;
+  }
+  .seal img{position:absolute;inset:0;width:100%;height:100%;transition:transform .9s cubic-bezier(.3,0,.4,1), opacity .9s ease}
+  .guest{font-family:'Aref Ruqaa',serif;font-size:20px;color:var(--rose-d);transition:opacity .4s;animation:fadeUp 1s .8s ease both}
+  .guest:empty{display:none}
+
+  /* phones (portrait): tall envelope that covers the whole screen, keeping its proportions so the seal stays aligned */
+  @media (max-aspect-ratio: 3/4){
+    .envelope{width:max(100vw, calc(100svh * 853 / 1844));aspect-ratio:853/1844;flex-shrink:0}
+    .env-body{border-radius:0;box-shadow:none}
+    .seal{left:50.88%;top:47.07%;width:30%}
+    .seal img{filter:drop-shadow(0 2px 2px rgba(92,31,46,.18))}
+    .guest{position:absolute;left:0;right:0;bottom:17svh;z-index:7;text-align:center}
+  }
+
+  /* opening sequence */
+  #intro.s1 .seal{animation:none}
+  #intro.s1 .seal::after,#intro.s1 .guest{opacity:0;animation:none}
+  /* the seal gets a soft press, then stays on the flap and rises with it */
+  #intro.s1 .seal img{animation:sealPress .6s cubic-bezier(.4,0,.2,1)}
+  @keyframes sealPress{50%{transform:scale(.92)}}
+  /* the top flap slowly opens upward on its hinge (stays attached), then everything fades together */
+  /* the flap (with the seal) lifts gently upward while the whole envelope dissolves away */
+  #intro.s2 .env-flap{
+    transform:translateY(-14%) rotateX(22deg);
+    transition:transform 2.2s cubic-bezier(.25,.6,.3,1);
+  }
+  #intro.s2 .envelope{opacity:0;transition:opacity 1.8s .25s ease}
+
+  /* web (landscape): the flap really opens on its top hinge — it swings up and over, showing its
+     inner face above the envelope — while the envelope eases down so the open shape stays centred,
+     and only then does everything dissolve */
+  @media (min-aspect-ratio: 3/4){
+    .envelope{clip-path:none;perspective:1300px} /* closer camera: the flap visibly swings toward you */
+    /* the open mouth of the envelope: a soft shadow under the hinge that deepens as the flap lifts */
+    .env-shade{
+      position:absolute;inset:0;z-index:4;border-radius:6px;pointer-events:none;opacity:0;
+      background:
+        linear-gradient(180deg,rgba(92,31,46,.32),rgba(92,31,46,.12) 14%,transparent 42%),
+        radial-gradient(ellipse 60% 40% at 50% 0,rgba(92,31,46,.18),transparent 70%);
+    }
+    #intro.s2 .env-shade{animation:shadeIn 2.4s ease-out both}
+    /* keyframed so the flap is exactly edge-on (90°) at the halfway point — the seal swaps sides there */
+    /* no front/back-face trick here (Firefox drops the flap with it): the flap is one flat layer that
+       stays visible all the way round; turned over it already reads as the open flap, just shaded */
+    .env-flap{transform-style:flat}
+    .env-flap img,.seal{backface-visibility:visible;-webkit-backface-visibility:visible}
+    .env-flap img.in{display:none}
+    #intro.s2 .env-flap{transform:rotateX(180deg);animation:flapOpen 2.4s both}
+    #intro.s2 .env-flap>picture>img,#intro.s2 .seal img{animation:flapShade 2.4s linear both}
+    /* the seal stays glued to the flap; past 90° it's flipped back so it reads upright on the open flap */
+    #intro.s2 .seal{animation:sealSide 2.4s linear both}
+    /* flap, seal and envelope stay one piece: they ease down together, then dissolve together */
+    #intro.s2 .envelope{
+      opacity:0;transform:translateY(24%) scale(.94);
+      transition:transform 2.4s cubic-bezier(.45,.05,.3,1),opacity .55s 1.2s ease-in; /* fade starts while the flap is still rising */
+    }
+  }
+  @keyframes flapOpen{
+    0%{transform:rotateX(0);animation-timing-function:cubic-bezier(.5,0,1,1)}
+    50%{transform:rotateX(90deg);animation-timing-function:cubic-bezier(0,0,.4,1)}
+    100%{transform:rotateX(150deg)} /* never swings all the way up: it's gone before it gets tall */
+  }
+  @keyframes sealSide{
+    0%,49.9%{transform:translate(-50%,-50%)}
+    50%,100%{transform:translate(-50%,-50%) scaleY(-1)}
+  }
+  /* light falls off as the flap turns edge-on, then the inside comes up a touch darker than the front */
+  @keyframes flapShade{
+    0%{filter:brightness(1)}
+    49.9%{filter:brightness(.8)}
+    50%{filter:brightness(.76)}
+    100%{filter:brightness(.92)}
+  }
+  @keyframes shadeIn{0%{opacity:0}45%{opacity:1}100%{opacity:.8}}
+
+  /* ================= HERO (soft paper + pink flowers) ================= */
+  /* ================= PAGE BACKDROP =================
+     the same backdrop the envelope screen leaves behind once it opens, pinned to the screen under the
+     whole page: the intro dissolves straight into it and every section scrolls over the same view */
+  .page-bg{
+    position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 45%,rgba(255,255,255,.7),transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 50%,transparent 50%,rgba(142,51,72,.18)),
+      #f1e0db;
+  }
+  .page-bg::before{
+    content:"";position:absolute;inset:-40px;
+    background:url("assets/envelope-body.jpg") center/cover no-repeat;
+    filter:blur(26px) saturate(1.1);
+    opacity:.55;
+  }
+  .page-bg::after{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 48%,rgba(255,255,255,.45),transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 50%,transparent 45%,rgba(92,31,46,.22));
+  }
+  .page-bg .leaf{z-index:1;animation:none}
+
+  .hero{position:relative;height:100svh;min-height:620px;overflow:hidden}
+  @media (min-aspect-ratio: 3/4){
+    .hero{min-height:560px}
+    .hero-in{padding:4svh 26px 100px}
+    .bism{font-size:clamp(15px,2.6svh,20px)}
+    .hero-lead{font-size:clamp(15px,2.6svh,20px);margin-top:1.5svh}
+    .names{font-size:clamp(56px,11svh,110px);line-height:1.02;margin:calc(2svh - .2em) 0 -.45em}
+    .names .amp{line-height:1}
+    .hero-date{font-size:clamp(15px,2.4svh,19px);margin-top:2.4svh}
+    .hero-date b{font-size:clamp(32px,5.5svh,46px)}
+    .hero-time{font-size:clamp(13px,2.1svh,16px);margin-top:.8svh}
+    .hero-btn{margin-top:2.6svh;font-size:clamp(14px,2.2svh,17px);padding:1.6svh 32px}
+    .scroll-cue{display:none}
+  }
+
+  .hero-in{
+    position:relative;z-index:3;height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:60px 26px 90px;
+  }
+  .bism{font-family:'Amiri',serif;font-size:15px;color:#9a8380;letter-spacing:.3px}
+  .hero-lead{font-family:'Amiri',serif;font-size:clamp(14px,4vw,16px);color:#8c7471;line-height:1.9;margin-top:14px}
+  .names{
+    font-family:'Aref Ruqaa',serif;font-weight:700;
+    font-size:clamp(52px,17vw,78px);line-height:1.1;margin:calc(18px - .2em) 0 calc(6px - .45em);padding:.2em .25em .45em;
+    background:linear-gradient(170deg,#a88a87,#78595b 55%,#9a7473);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 3px 0 rgba(255,255,255,.9)) drop-shadow(0 8px 16px rgba(142,51,72,.12));
+  }
+  .names span{display:block}
+  .names .amp{font-family:'Amiri',serif;font-weight:400;font-size:.45em;line-height:1.1;
+    background:linear-gradient(90deg,var(--rose-2),var(--rose));-webkit-background-clip:text;background-clip:text}
+  .hero-date{
+    display:flex;align-items:center;gap:14px;margin-top:18px;
+    font-family:'Amiri',serif;color:#86696a;font-size:15px;
+  }
+  .hero-date b{font-family:'Tajawal',sans-serif;font-size:34px;font-weight:300;color:var(--rose);line-height:1;
+    padding:0 14px;border-inline:1px solid rgba(196,89,111,.35)}
+  .hero-time{font-size:13px;color:#9a8380;margin-top:10px}
+  .hero-btn{
+    margin-top:26px;padding:11px 28px;border-radius:999px;font-size:14px;font-weight:500;color:#fff;
+    background:linear-gradient(135deg,#e8aab6,var(--rose-2) 50%,var(--rose));
+    box-shadow:0 10px 22px -10px rgba(196,89,111,.7),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .scroll-cue{position:absolute;bottom:92px;left:50%;transform:translateX(-50%);z-index:3;color:var(--rose-2);animation:bob 1.2s ease-in-out infinite alternate}
+  .scroll-cue svg{width:22px;height:22px;display:block}
+
+  .hero-in>*,.scroll-cue{opacity:0}
+  body.opened .hero-in>*{animation:fadeUp 1.1s ease both}
+  body.opened .hero-in>:nth-child(1){animation-delay:.5s}
+  body.opened .hero-in>:nth-child(2){animation-delay:.7s}
+  body.opened .hero-in>:nth-child(3){animation-delay:.95s}
+  body.opened .hero-in>:nth-child(4){animation-delay:1.15s}
+  body.opened .hero-in>:nth-child(5){animation-delay:1.3s}
+  body.opened .hero-in>:nth-child(6){animation-delay:1.45s}
+  body.opened .hero-in>:nth-child(7){animation-delay:1.6s}
+  body.opened .scroll-cue{opacity:1;transition:opacity 1s 2s}
+  @keyframes bloom{from{opacity:0;scale:.75;filter:blur(4px) drop-shadow(0 8px 14px rgba(142,51,72,.18))}to{opacity:1;scale:1}}
+
+  /* ================= SECTIONS ================= */
+  main{padding:0 6px 120px}
+  section{padding:44px 0;text-align:center;position:relative;isolation:isolate}
+  /* no hard bands: every section sits on the same fixed backdrop, with a soft white glow behind each one */
+  section::before{
+    content:"";position:absolute;inset:0 -6px;z-index:-1;pointer-events:none;
+    background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(255,255,255,.55),transparent 75%);
+  }
+  .card{
+    background:linear-gradient(180deg,rgba(255,253,250,.92),rgba(253,247,243,.88));
+    -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    border:1px solid rgba(201,162,94,.28);
+    border-radius:24px;
+    padding:30px 20px;
+    box-shadow:0 22px 40px -28px rgba(92,31,46,.4), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  .verse{
+    font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(28px,8.5vw,38px);line-height:1.6;
+    background:linear-gradient(120deg,var(--rose-d),var(--gold) 40%,var(--rose) 60%,var(--rose-d));
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shine 7s linear infinite;
+  }
+  .text{font-size:15px;color:var(--muted);line-height:2}
+  .text.sub{font-size:13px;line-height:1.9}
+  h2+.sub{margin:-8px 0 16px}
+  .families{display:grid;grid-template-columns:1fr 1fr;margin:16px 0 6px}
+  .families div{padding:6px}
+  .families div+div{border-right:1px solid var(--line)}
+  .families span{display:block;font-size:12px;color:var(--muted)}
+  .families b{font-size:16px;font-weight:700;color:var(--wine)}
+
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fillIn{to{fill-opacity:1;opacity:1}}
+
+  .names-sm{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:34px;color:var(--wine);margin:4px 0}
+  .names-sm .amp{font-family:'Amiri',serif;color:var(--rose);font-size:22px;margin:0 8px;font-weight:400}
+  .venue{font-size:16px;color:var(--wine);font-weight:700}
+
+  /* calendar */
+  .calendar{position:relative;width:300px;max-width:88%;margin:22px auto 18px;border-radius:16px;overflow:hidden;box-shadow:0 22px 40px -18px rgba(92,31,46,.45)}
+  .calendar img{display:block;width:100%;height:auto}
+  .cal-month{position:absolute;top:5%;left:0;right:0;text-align:center;font-family:'Caveat',cursive;font-size:30px;font-weight:600;line-height:1;color:#1a1a1a;letter-spacing:.5px;direction:ltr}
+  /* heart around the 29 (Thu column, last row) */
+  .cal-heart{position:absolute;left:62.2%;top:84.5%;width:16%;transform:translate(-50%,-58%);fill:none;stroke:var(--gold);stroke-width:1.3;overflow:visible}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 20px;border-radius:999px;font-size:14px;font-weight:500;
+    background:#fff;border:1px solid var(--line);color:var(--ink);
+    box-shadow:0 8px 18px -12px rgba(92,31,46,.4);transition:.25s;
+  }
+  .pill:hover{border-color:var(--rose);color:var(--rose-d)}
+  .pill.gold{background:linear-gradient(135deg,#dc8c9c,var(--rose) 50%,var(--rose-d));color:#fff;border-color:transparent;font-weight:700}
+  .pill.gold:hover{color:#fff;filter:brightness(1.05)}
+
+  h2{font-size:20px;font-weight:700;color:var(--wine);margin-bottom:18px}
+  h2::after{content:"";display:block;width:40px;height:2px;margin:8px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+  /* countdown */
+  .countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .cd{border:1px solid var(--line);border-radius:16px;padding:12px 2px 8px;background:linear-gradient(180deg,#fbf0ee,#f5e3e1)}
+  .cd b{display:block;font-size:28px;font-weight:800;color:var(--rose-d);line-height:1.2;font-variant-numeric:tabular-nums}
+  .cd span{font-size:12px;color:var(--muted)}
+  .done-msg{font-family:'Aref Ruqaa',serif;font-size:28px;color:var(--rose)}
+
+  /* program: the evening sky — the moon crosses it from sunset to night, one star per part of the evening */
+  .sky{
+    position:relative;aspect-ratio:16/11;border-radius:16px;overflow:hidden;
+    touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;outline:none;
+    background:linear-gradient(180deg,#f1bcb0 0%,#f7d4c3 45%,#fde8d3 78%);
+    box-shadow:inset 0 0 0 1px rgba(201,162,94,.25),0 18px 30px -22px rgba(92,31,46,.5);
+  }
+  .sky:active{cursor:grabbing}
+  .sky:focus-visible{box-shadow:0 0 0 2px var(--rose-2)}
+  .sky-dusk,.sky-night,.sky-stars,.sky-path{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .sky-dusk{background:linear-gradient(180deg,#8d6993 0%,#cf8d9f 50%,#f2b59e 80%);opacity:var(--dusk,0)}
+  .sky-night{background:linear-gradient(180deg,#1d0f27 0%,#3b1c3a 50%,#6a2f48 85%);opacity:var(--night,0)}
+  .sky-stars{opacity:var(--night,0)}
+  .sky-stars i{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:#fff6e2;
+    box-shadow:0 0 4px rgba(255,240,210,.9);animation:twinkle 3.2s ease-in-out infinite alternate}
+  @keyframes twinkle{from{opacity:.25}to{opacity:1}}
+  .sky-sun{position:absolute;left:17%;top:calc(60% + var(--p,0) * 50%);width:13%;aspect-ratio:1;border-radius:50%;
+    transform:translate(-50%,-50%);opacity:calc(1 - var(--p,0) * 2.2);
+    background:radial-gradient(circle,#fff6dc 0%,#fbd79a 55%,#f3b37a 100%);
+    box-shadow:0 0 22px 8px rgba(251,206,140,.55),0 0 60px 24px rgba(246,170,130,.3)}
+  .sky-path polyline{fill:none;vector-effect:non-scaling-stroke}
+  .sky-path .base{stroke:rgba(255,255,255,.7);stroke-width:1.2;stroke-dasharray:2 5}
+  .sky-path .done{stroke:var(--gold-2);stroke-width:1.6;filter:drop-shadow(0 0 3px rgba(236,212,156,.9))}
+  .sky-pt{position:absolute;z-index:2;width:28px;height:28px;transform:translate(-50%,-50%);-webkit-tap-highlight-color:transparent}
+  .sky-pt::before{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px;border-radius:50%;
+    border:1.5px solid var(--rose-d);background:rgba(255,255,255,.5);transition:.4s}
+  .sky-pt.lit::before{background:var(--gold-2);border-color:#fff;box-shadow:0 0 8px 3px rgba(236,212,156,.8)}
+  .sky-pt span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;
+    font-size:11px;font-weight:700;color:var(--wine);transition:opacity .3s,color .4s}
+  .sky.dark .sky-pt span{color:#fbeedd}
+  .sky.dark .sky-pt::before{border-color:#fbeedd}
+  .sky-pt.active span{opacity:0}
+  .sky-moon{position:absolute;z-index:3;width:11%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;
+    background:
+      radial-gradient(circle at 62% 38%,rgba(214,190,150,.45) 0 7%,transparent 8%),
+      radial-gradient(circle at 38% 64%,rgba(214,190,150,.35) 0 10%,transparent 11%),
+      radial-gradient(circle at 35% 32%,#fffdf6,#f7ebcd 60%,#e8d2a2);
+    box-shadow:0 0 18px 6px rgba(255,238,200,.6),0 0 54px 20px rgba(255,222,180,.28)}
+  .sky-hills{position:absolute;z-index:1;left:0;bottom:0;width:100%;height:26%;pointer-events:none}
+  .sky-info{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px}
+  .sky-nav{flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);background:#fff;color:var(--rose-d);transition:opacity .3s}
+  .sky-nav:disabled{opacity:.3;cursor:default}
+  .sky-nav svg{width:18px;height:18px}
+  .sky-ev time{display:block;font-size:14px;color:var(--gold-dark);font-weight:700}
+  .sky-ev p{font-family:'Aref Ruqaa',serif;font-size:26px;color:var(--wine);line-height:1.5}
+  .sky-ev span{font-size:11px;color:var(--muted);letter-spacing:1px}
+  .sky-ev.swap{animation:fadeUp .6s ease both}
+  .tl-hint{margin-top:8px;font-size:12px;color:var(--muted);transition:opacity .5s}
+  .tl-hint.gone{opacity:0}
+
+  .map-box{position:relative;border-radius:16px;overflow:hidden;margin:4px 0 16px;box-shadow:0 0 0 1px var(--line),0 6px 18px rgba(92,31,46,.08)}
+  /* calendar + map side by side */
+  .venue-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:12px;margin:18px 0 0}
+  .venue-col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0;grid-column:span 6}
+  .venue-grid .calendar{width:100%;max-width:none;margin:0;container-type:inline-size}
+  .venue-grid .cal-month{font-size:10cqw}
+  .venue-grid .pill{padding:9px 14px;font-size:13px;white-space:nowrap}
+  .venue-map{flex:1;width:100%;margin:0;box-shadow:0 22px 40px -18px rgba(92,31,46,.45)}
+  .venue-map .map{position:absolute;inset:0;height:100%}
+  .venue-map .map-label{font-size:11px;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* mobile: swipeable row */
+  @media (max-width:600px){
+    .venue-grid{
+      display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;
+      margin:4px -20px -12px;padding:14px 11% 28px;
+    }
+    .venue-grid::-webkit-scrollbar{display:none}
+    .venue-col{flex:0 0 78%;scroll-snap-align:center}
+    .venue-grid .pill{padding:10px 20px;font-size:14px}
+    .venue-map .map-label{font-size:13px}
+  }
+  .map{display:block;width:100%;height:220px;border:0;filter:grayscale(1) contrast(.92) brightness(1.05)}
+  /* custom pin sits over Google's marker (tip at map centre) */
+  .map-pin{position:absolute;left:50%;top:50%;width:46px;height:58px;transform:translate(-50%,-100%);pointer-events:none}
+  .map-pin svg{position:relative;display:block;width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(92,31,46,.35))}
+  .map-pin::before{content:"";position:absolute;left:50%;top:100%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;
+    background:radial-gradient(circle,rgba(142,51,72,.28),rgba(142,51,72,0) 68%);animation:pinPulse 2.4s ease-out infinite}
+  @keyframes pinPulse{0%{transform:scale(.45);opacity:1}100%{transform:scale(1.25);opacity:0}}
+  .map-label{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;
+    padding:7px 18px;border-radius:999px;background:var(--rose-d);color:#fff;font-size:14px;font-weight:700;white-space:nowrap;
+    box-shadow:0 6px 16px rgba(92,31,46,.3);pointer-events:none}
+  .map-label svg{width:16px;height:16px;flex:none}
+  @media (prefers-reduced-motion: reduce){.map-pin::before{animation:none;transform:scale(.9)}}
+
+  /* rsvp */
+  form{display:flex;flex-direction:column;gap:12px;text-align:right}
+  label{display:block;margin-bottom:6px;font-size:13px;color:var(--muted)}
+  form .chips{justify-content:flex-start;margin-bottom:10px}
+  input,select,textarea{
+    width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+    background:#fff;font-family:inherit;font-size:16px;color:var(--ink);outline:none;
+  }
+  input::placeholder,textarea::placeholder{color:#c3aeb1}
+  input:focus,select:focus,textarea:focus{border-color:var(--rose)}
+  .choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .choice input{display:none}
+  .choice label{margin:0;border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center;font-size:14px;color:var(--ink);background:#fff;cursor:pointer;transition:.2s}
+  .choice input:checked+label{border-color:var(--rose);background:rgba(196,89,111,.1);color:var(--rose-d);font-weight:700}
+  form .pill{justify-content:center;padding:13px;font-size:15px}
+
+  /* blessing */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+  .chip{padding:7px 13px;border-radius:999px;font-size:13px;line-height:1.5;border:1px solid var(--line);background:#fff;color:var(--ink);transition:.2s}
+  .chip:hover,.chip.on{border-color:var(--rose);background:rgba(196,89,111,.1);color:var(--rose-d)}
+  .heart{position:fixed;z-index:55;pointer-events:none;font-size:22px;animation:heartUp 1.8s ease-out forwards}
+  @keyframes heartUp{from{opacity:1;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(var(--dx),-260px) scale(1.3)}}
+
+  /* wishes wall */
+  .wall{display:flex;flex-direction:column;gap:12px;max-height:420px;overflow-y:auto;padding:4px 2px;text-align:right;
+    mask-image:linear-gradient(to bottom,#000 88%,transparent);-webkit-mask-image:linear-gradient(to bottom,#000 88%,transparent)}
+  .wish{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px 12px;animation:fadeUp .6s ease both}
+  .wish::before{content:"”";position:absolute;top:-6px;left:12px;font-family:'Amiri',serif;font-size:46px;color:var(--rose);opacity:.25;line-height:1}
+  .wish p{font-family:'Amiri',serif;font-size:15px;color:var(--ink);line-height:1.9}
+  .wish span{display:block;margin-top:6px;font-size:13px;color:var(--rose-d);font-weight:700}
+  .wish.mine{border-color:var(--rose);background:rgba(196,89,111,.06)}
+  .wall-empty{color:var(--muted);font-size:14px;padding:10px 0}
+
+  footer{text-align:center;padding:24px 0 10px}
+  footer p{color:var(--muted);font-size:14px}
+  .hrt{display:inline-block;width:.95em;height:.95em;vertical-align:-.12em;margin-inline-start:2px;fill:var(--rose-2)}
+
+  /* ================= BOTTOM NAV ================= */
+  .nav{
+    position:fixed;left:50%;bottom:10px;transform:translate(-50%,140%);
+    width:min(460px,calc(100% - 20px));z-index:40;
+    background:rgba(255,253,249,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 30px -10px rgba(92,31,46,.35);
+    display:grid;grid-template-columns:repeat(5,1fr);align-items:end;
+    padding:8px 4px 6px;
+    transition:transform .9s cubic-bezier(.2,.8,.2,1) 1.2s;
+  }
+  body.opened .nav{transform:translate(-50%,0)}
+  .nav a,.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--wine);font-weight:500}
+  .nav svg{width:21px;height:21px}
+  .nav .center .g{
+    width:54px;height:54px;border-radius:50%;margin-top:-30px;
+    background:radial-gradient(circle at 35% 30%,#e6a0ae,var(--rose) 55%,var(--rose-d));
+    box-shadow:0 0 0 5px rgba(255,253,249,.95),0 8px 18px -4px rgba(142,51,72,.6);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .nav .center .g svg{width:26px;height:26px}
+  .nav button.playing .note{animation:bob .8s ease-in-out infinite alternate}
+
+  .toast{
+    position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:rgba(74,43,49,.9);color:#fff;padding:9px 18px;border-radius:999px;font-size:14px;
+    opacity:0;transition:.35s;z-index:60;pointer-events:none;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+
+  @keyframes envIn{from{opacity:0;translate:0 40px;scale:.94}to{opacity:1;translate:0 0;scale:1}}
+  @keyframes sealPulse{0%,100%{transform:translate(-50%,-50%) translateZ(1px) scale(1)}50%{transform:translate(-50%,-50%) translateZ(1px) scale(1.05)}}
+  @keyframes ring{from{box-shadow:0 0 0 0 rgba(196,89,111,.45)}to{box-shadow:0 0 0 22px rgba(196,89,111,0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+  @keyframes rise{from{opacity:0;transform:translateY(60px) scale(.95)}to{opacity:1;transform:none}}
+  @keyframes shine{to{background-position:200% center}}
+  @keyframes bob{to{transform:translateY(-3px)}}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal,.hero-in>*,.scroll-cue{opacity:1}
+    .reveal{transform:none}
+  }
+</style>
+<link rel="icon" type="image/png" href="mersal-favicon.png">
+<link rel="apple-touch-icon" href="mersal-favicon.png">
+<style>.mersal-credit{margin:24px auto 0;font-size:12px;line-height:1.8;text-align:center;letter-spacing:.2px;opacity:.7;position:relative;z-index:2}.mersal-credit::before{content:"";display:block;width:36px;height:1px;margin:0 auto 12px;background:currentColor;opacity:.35}.mersal-credit a{color:inherit;text-decoration:none;white-space:nowrap;transition:opacity .2s}.mersal-credit a:hover{opacity:.6}.mersal-credit b{font-weight:700}.mersal-credit i{font-style:normal;margin:0 6px;opacity:.6}.mersal-credit span[dir]{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.92em;letter-spacing:.4px}.mersal-credit .mc-tag{display:block;font-size:1.08em;margin-bottom:4px;letter-spacing:.3px}.mersal-credit a{display:inline-block;font-size:.95em;opacity:.85}</style>
+</head>
+<body class="locked">
+
+
+<!-- ============ INTRO (envelope photo layers + real wax seal + card photo) ============ -->
+<div id="intro">
+  <i class="leaf tl"></i><i class="leaf br"></i>
+  <div class="env-stage">
+    <div class="envelope">
+      <!-- phones (portrait) get a tall envelope that fills the screen -->
+      <picture>
+        <source media="(max-aspect-ratio: 3/4)" srcset="assets/envelope-body-m.jpg">
+        <img class="env-body" src="assets/envelope-body.jpg" alt="">
+      </picture>
+      <i class="env-shade" aria-hidden="true"></i>
+      <div class="env-flap">
+        <picture>
+          <source media="(max-aspect-ratio: 3/4)" srcset="assets/envelope-flap-m.png">
+          <img src="assets/envelope-flap.png" alt="">
+        </picture>
+        <picture>
+          <source media="(max-aspect-ratio: 3/4)" srcset="assets/envelope-flap-m.png">
+          <img class="in" src="assets/envelope-flap.png" alt="">
+        </picture>
+        <!-- the seal sits on the flap, so it rises with it when the flap opens -->
+        <button class="seal" id="openBtn" aria-label="افتح الدعوة">
+          <picture>
+            <source media="(max-aspect-ratio: 3/4)" srcset="assets/seal-rose.png">
+            <img src="assets/seal-rose.png" alt="">
+          </picture>
+        </button>
+      </div>
+    </div>
+    <p class="guest" id="guestName"></p>
+  </div>
+</div>
+
+<div class="page-bg"><i class="leaf tl"></i><i class="leaf br"></i></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="home">
+  <div class="hero-in">
+    <p class="bism">بسم الله الرحمن الرحيم</p>
+    <p class="hero-lead">بقلوبٍ يملؤها الحب والفرح<br>ندعوكم لمشاركتنا حفل زفاف</p>
+    <h1 class="names">
+      <span data-f="groom"></span>
+      <span class="amp">&amp;</span>
+      <span data-f="bride"></span>
+    </h1>
+    <div class="hero-date"><span id="heroWeekday"></span><b id="heroDay"></b><span id="heroMonth"></span></div>
+    <p class="hero-time" id="heroDate"></p>
+    <a class="hero-btn" href="#rsvpSec">تأكيد الحضور</a>
+  </div>
+
+  <a class="scroll-cue" href="#invite" aria-label="للأسفل">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</header>
+
+<main class="wrap">
+
+  <section class="reveal" id="invite">
+    <div class="card">
+      <div class="verse">وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً</div>
+      <p class="text">بكل فرحٍ وسرور، يتشرّف</p>
+      <div class="families">
+        <div><span>والد العريس</span><b data-f="groomFather"></b></div>
+        <div><span>والد العروس</span><b data-f="brideFather"></b></div>
+      </div>
+      <p class="text">بدعوتكم لمشاركتنا فرحتنا بحفل زفاف أبنائنا<br>فحضوركم يزيدنا شرفاً وسعادة</p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card">
+      <h2>العد التنازلي</h2>
+      <div class="countdown" id="countdown">
+        <div class="cd"><b id="cd-d">0</b><span>أيام</span></div>
+        <div class="cd"><b id="cd-h">0</b><span>ساعات</span></div>
+        <div class="cd"><b id="cd-m">0</b><span>دقائق</span></div>
+        <div class="cd"><b id="cd-s">0</b><span>ثواني</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal" id="location">
+    <div class="card">
+    <h2>الموعد والمكان</h2>
+    <p class="venue" data-f="venueName"></p>
+    <p class="text sub" data-f="venueAddress"></p>
+
+    <div class="venue-grid">
+    <div class="venue-col">
+    <div class="calendar">
+      <img src="assets/images/calendar.jpg" alt="التقويم">
+      <div class="cal-month" id="calMonth"></div>
+      <svg class="cal-heart" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.5S2 14.2 2 7.6A4.9 4.9 0 0 1 12 5a4.9 4.9 0 0 1 10 2.6c0 6.6-10 12.9-10 12.9Z"/></svg>
+    </div>
+
+    <button class="pill" id="calBtn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+      حفظ الموعد
+    </button>
+    </div>
+
+    <div class="venue-col">
+    <div class="map-box venue-map">
+      <iframe class="map" id="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="الخريطة"></iframe>
+      <div class="map-pin" aria-hidden="true">
+        <svg viewBox="0 0 46 58"><path d="M23 2C11.4 2 2 11.2 2 22.6 2 37.5 23 56 23 56s21-18.5 21-33.4C44 11.2 34.6 2 23 2z" fill="#8e3348" stroke="#fff" stroke-width="2.5"/><circle cx="23" cy="22" r="11" fill="#fff"/><path d="M23 28.2s-6.2-3.8-6.2-8.2a3.4 3.4 0 0 1 6.2-1.9 3.4 3.4 0 0 1 6.2 1.9c0 4.4-6.2 8.2-6.2 8.2z" fill="#8e3348"/></svg>
+      </div>
+      <div class="map-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span data-f="venueName"></span>
+      </div>
+    </div>
+    <a class="pill gold" id="mapBtn" target="_blank" rel="noopener">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      فتح الخريطة
+    </a>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="card">
+      <h2>برنامج المناسبة</h2>
+      <div class="sky" id="sky" tabindex="0" aria-label="برنامج الأمسية"></div>
+      <div class="sky-info">
+        <button class="sky-nav" data-d="-1" aria-label="الفقرة السابقة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <div class="sky-ev" id="skyEv" aria-live="polite"><time id="skyTime"></time><p id="skyTitle"></p><span id="skyStep"></span></div>
+        <button class="sky-nav" data-d="1" aria-label="الفقرة التالية">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+      </div>
+      <p class="tl-hint" id="tlHint">اسحب القمر لتمضي الأمسية ←</p>
+    </div>
+  </section>
+
+  <section class="reveal" id="rsvpSec">
+    <div class="card">
+      <h2>تأكيد الحضور والمباركة</h2>
+      <p class="text sub">أكّد حضورك وشاركنا مباركتك، وتصلنا مباشرة عبر واتساب</p>
+      <form id="rsvp">
+        <div>
+          <label for="gname">الاسم الكريم</label>
+          <input id="gname" required placeholder="اكتب اسمك">
+        </div>
+        <div class="choice">
+          <input type="radio" name="att" id="yes" checked><label for="yes">سأحضر بإذن الله</label>
+          <input type="radio" name="att" id="no"><label for="no">أعتذر عن الحضور</label>
+        </div>
+        <div id="countWrap">
+          <label for="gcount">عدد الأشخاص</label>
+          <select id="gcount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+        </div>
+        <div>
+          <label for="bmsg">مباركة للعروسين (اختياري)</label>
+          <div class="chips" id="chips"></div>
+          <textarea id="bmsg" rows="3" placeholder="اختر مباركة جاهزة أو اكتب كلماتك الخاصة..."></textarea>
+        </div>
+        <button class="pill gold" type="submit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+          إرسال عبر واتساب
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="reveal" id="wishesSec">
+    <div class="card">
+      <h2>مباركات الأحبة</h2>
+      <p class="text sub">كلمات جميلة من القلب للعروسين <svg class="hrt" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.5S2 14.2 2 7.6A4.9 4.9 0 0 1 12 5a4.9 4.9 0 0 1 10 2.6c0 6.6-10 12.9-10 12.9Z"/></svg></p>
+      <div class="wall" id="wall"></div>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <p>بوجودكم تكتمل فرحتنا <svg class="hrt" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.5S2 14.2 2 7.6A4.9 4.9 0 0 1 12 5a4.9 4.9 0 0 1 10 2.6c0 6.6-10 12.9-10 12.9Z"/></svg></p>
+    <div class="names-sm"><span data-f="groom"></span><span class="amp">&amp;</span><span data-f="bride"></span></div>
+    <p class="mersal-credit"><span class="mc-tag">لكل مناسبة، رسالة تستحق أن تصل</span><a href="https://instagram.com/mersal.invites" target="_blank" rel="noopener">بواسطة <b>مرسال</b><i aria-hidden="true">·</i><span dir="ltr">@mersal.invites</span></a></p>
+  </footer>
+</main>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="nav">
+  <a id="callBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+    اتصل
+  </a>
+  <button id="musicBtn">
+    <svg class="note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    موسيقى
+  </button>
+  <a href="#home" class="center" aria-label="الرئيسية">
+    <span class="g">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="14" r="5.5"/><circle cx="15" cy="14" r="5.5"/><path d="M13.5 4.5l1.5-2 1.5 2-1.5 2z"/></svg>
+    </span>
+  </a>
+  <a href="#location">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+    الموقع
+  </a>
+  <a href="#rsvpSec">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.5 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>
+    تأكيد الحضور
+  </a>
+</nav>
+
+<audio id="audio" loop preload="auto"></audio>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   عدّل بيانات الدعوة من هنا فقط
+   ========================================================= */
+const CONFIG = {
+  groom: "راكان",
+  bride: "ميار",
+  initials: ["", ""],                      // حروف المونوغرام [العريس, العروس] — فارغ = أول حرف من الاسم
+  groomFather: "السيد عبدالرحمن الشريف",
+  brideFather: "السيد إبراهيم العمري",
+  date: "2026-10-29T19:00:00",            // تاريخ ووقت الحفل
+  durationHours: 5,
+  venueName: "فندق فورسيزونز",
+  venueAddress: "مركز المناسبات - القاعة الكبرى",
+  mapQuery: "Four Seasons Hotel",          // اسم المكان أو الإحداثيات مثل "31.9038,35.2034"
+  phone: "+970590000000",
+  whatsapp: "970590000000",                // رقم واتساب لاستقبال تأكيد الحضور والمباركات (بدون +)
+  blessings: [
+    "بارك الله لكما وبارك عليكما وجمع بينكما في خير",
+    "ألف مبروك، الله يتمم على خير ويسعد قلوبكم",
+    "بالرفاه والبنين، وعقبال الذرية الصالحة",
+    "مبروك لأحلى عرسان، أيامكم كلها فرح",
+  ],
+  sheetUrl: "https://script.google.com/macros/s/AKfycbyUPkqbC0xpqi_wucQY1CRP--5wuGvnOuTFDeOhrNVkrXtkINNEEkPXYHDWu_ykwcfT/exec",                          // رابط Google Apps Script (ينتهي بـ /exec) — طريقة التركيب في google-sheets-script.gs
+  music: "videoplayback.m4a",                           // ضع ملف mp3 بنفس المجلد واكتب اسمه، مثلاً "music.mp3"
+  program: [
+    { time: "7:00 مساءً",  title: "استقبال الضيوف" },
+    { time: "8:00 مساءً",  title: "زفّة العروسين" },
+    { time: "9:00 مساءً",  title: "العشاء" },
+    { time: "10:00 مساءً", title: "قطع الكعكة" },
+    { time: "11:00 مساءً", title: "ختام الحفل" },
+  ],
+};
+/* ========================================================= */
+
+const $ = s => document.querySelector(s);
+const HRT = `<svg class="hrt" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.5S2 14.2 2 7.6A4.9 4.9 0 0 1 12 5a4.9 4.9 0 0 1 10 2.6c0 6.6-10 12.9-10 12.9Z"/></svg>`;
+const eventDate = new Date(CONFIG.date);
+
+document.querySelectorAll("[data-f]").forEach(el => el.textContent = CONFIG[el.dataset.f] || "");
+document.title = `دعوة زفاف ${CONFIG.groom} & ${CONFIG.bride}`;
+
+/* guest name under the envelope: index.html?to=محمد أحمد */
+const guest = new URLSearchParams(location.search).get("to");
+if (guest && guest.trim()) $("#guestName").textContent = guest.trim();
+
+/* ---- dates ---- */
+const f = o => new Intl.DateTimeFormat("ar-EG-u-nu-latn", o).format(eventDate);
+const timeAr = f({ hour: "numeric", minute: "2-digit" });
+$("#heroDate").textContent = `الساعة ${timeAr}`;
+$("#calMonth").textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(eventDate);
+
+/* ---- hero: date ---- */
+$("#heroWeekday").textContent = f({ weekday: "long" });
+$("#heroDay").textContent = f({ day: "numeric" });
+$("#heroMonth").textContent = `${f({ month: "long" })} ${f({ year: "numeric" })}`;
+
+/* ---- program: the evening sky ----
+   p runs 0 → 1 over the evening: the sky goes sunset → dusk → night and the moon rides an arc
+   from right to left; each part of the program is a star on that arc that lights up once passed */
+const sky = $("#sky"), prog = CONFIG.program, n = prog.length;
+const arc = t => [88 - 76 * t, 70 - 48 * Math.sin(Math.PI * t)];   // moon position, % of the sky box
+const tOf = i => n > 1 ? i / (n - 1) : .5;
+const arcPts = (a, b) => Array.from({ length: 41 }, (_, k) => arc(a + (b - a) * k / 40).join(",")).join(" ");
+const rnd = (a, b) => (a + Math.random() * (b - a)).toFixed(1);
+sky.innerHTML = `
+  <div class="sky-dusk"></div><div class="sky-night"></div>
+  <div class="sky-stars">${Array.from({ length: 30 }, () =>
+    `<i style="left:${rnd(2, 98)}%;top:${rnd(3, 60)}%;--s:${rnd(1, 2.6)}px;animation-delay:-${rnd(0, 4)}s"></i>`).join("")}</div>
+  <div class="sky-sun"></div>
+  <svg class="sky-hills" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40C50 22 90 30 140 38S240 18 300 30 380 36 400 28V80H0Z" fill="#8e3348" opacity=".55"/>
+    <path d="M0 58C60 44 120 50 170 56S260 40 320 50 385 56 400 52V80H0Z" fill="#5c1f2e" opacity=".92"/>
+  </svg>
+  <svg class="sky-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <polyline class="base" points="${arcPts(0, 1)}"/><polyline class="done" id="skyDone"/>
+  </svg>
+  ${prog.map((e, i) => { const [x, y] = arc(tOf(i));
+    return `<button class="sky-pt" data-i="${i}" style="left:${x}%;top:${y}%" aria-label="${e.time} — ${e.title}"><span>${e.time.split(" ")[0]}</span></button>`; }).join("")}
+  <div class="sky-moon" id="skyMoon"></div>`;
+
+const skyPts = [...sky.querySelectorAll(".sky-pt")], skyNav = [...document.querySelectorAll(".sky-nav")];
+let skyP = 0, skyIdx = -1, skyRaf, skyDrag = null;
+function paintSky(v) {
+  skyP = Math.min(1, Math.max(0, v));
+  const [x, y] = arc(skyP), s = sky.style;
+  s.setProperty("--p", skyP);
+  s.setProperty("--dusk", Math.min(1, skyP * 2.2));
+  s.setProperty("--night", Math.max(0, (skyP - .4) / .6));
+  sky.classList.toggle("dark", skyP > .4);
+  Object.assign($("#skyMoon").style, { left: x + "%", top: y + "%" });
+  $("#skyDone").setAttribute("points", skyP > 0 ? arcPts(0, skyP) : "");
+  const idx = Math.round(skyP * (n - 1));
+  skyPts.forEach((el, i) => { el.classList.toggle("lit", tOf(i) <= skyP + .001); el.classList.toggle("active", i === idx); });
+  if (idx !== skyIdx) showEvent(idx);
+}
+function showEvent(i) {
+  skyIdx = i;
+  const ev = $("#skyEv");
+  $("#skyTime").textContent = prog[i].time;
+  $("#skyTitle").textContent = prog[i].title;
+  $("#skyStep").textContent = `${i + 1} / ${n}`;
+  ev.classList.remove("swap"); void ev.offsetWidth; ev.classList.add("swap");
+  skyNav[0].disabled = i === 0; skyNav[1].disabled = i === n - 1;
+  if (i > 0) $("#tlHint").classList.add("gone");
+}
+function glideSky(to) {
+  cancelAnimationFrame(skyRaf);
+  const from = skyP, t0 = performance.now();
+  const dur = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 500 + Math.abs(to - from) * 900;
+  const step = now => {
+    const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+    paintSky(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) skyRaf = requestAnimationFrame(step);
+  };
+  skyRaf = requestAnimationFrame(step);
+}
+const skyGo = i => glideSky(tOf(Math.max(0, Math.min(n - 1, i))));
+
+/* drag the moon: moving toward the left moves the evening forward */
+sky.addEventListener("pointerdown", e => {
+  if (e.target.closest(".sky-pt")) return;
+  cancelAnimationFrame(skyRaf);
+  skyDrag = { x: e.clientX, p: skyP };
+  sky.setPointerCapture(e.pointerId);
+});
+sky.addEventListener("pointermove", e => {
+  if (skyDrag) paintSky(skyDrag.p + (skyDrag.x - e.clientX) / (sky.clientWidth * .76));
+});
+const skyDrop = () => { if (!skyDrag) return; skyDrag = null; skyGo(Math.round(skyP * (n - 1))); };
+sky.addEventListener("pointerup", skyDrop);
+sky.addEventListener("pointercancel", skyDrop);
+skyPts.forEach(el => el.addEventListener("click", () => skyGo(+el.dataset.i)));
+skyNav.forEach(b => b.addEventListener("click", () => skyGo(skyIdx + +b.dataset.d)));
+sky.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") skyGo(skyIdx + 1);
+  else if (e.key === "ArrowRight") skyGo(skyIdx - 1);
+  else return;
+  e.preventDefault();
+});
+paintSky(0);
+
+/* ---- map / call ---- */
+const q = encodeURIComponent(CONFIG.mapQuery);
+$("#map").src = `https://maps.google.com/maps?q=${q}&z=15&output=embed`;
+$("#mapBtn").href = `https://www.google.com/maps/search/?api=1&query=${q}`;
+$("#callBtn").href = `tel:${CONFIG.phone}`;
+
+/* ---- open the envelope ---- */
+const audio = $("#audio"), musicBtn = $("#musicBtn"), intro = $("#intro");
+if (CONFIG.music) audio.src = CONFIG.music;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let opening = false;
+$("#openBtn").addEventListener("click", () => {
+  if (opening) return; opening = true;
+  playMusic();                                   // start inside the tap so mobile browsers allow it
+  if (navigator.vibrate) navigator.vibrate(30);
+  const steps = reduce ? [[0, "s1 s2"]] : [
+    [0, "s1"],          // the wax seal lifts off whole
+    [550, "s2"],        // flap + seal lift up while the envelope fades out
+  ];
+  steps.forEach(([t, c]) => setTimeout(() => intro.classList.add(...c.split(" ")), t));
+  const web = matchMedia("(min-aspect-ratio: 3/4)").matches;   // web: slower hinged flap opening
+  setTimeout(() => {                                // then the envelope fades out as one piece
+    intro.classList.add("gone");
+    document.body.classList.add("opened");
+    document.body.classList.remove("locked");
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  }, reduce ? 300 : web ? 2100 : 2500);
+});
+function playMusic() {
+  if (!CONFIG.music) return;
+  audio.play().then(() => musicBtn.classList.add("playing")).catch(() => {});
+}
+musicBtn.addEventListener("click", () => {
+  if (!CONFIG.music) return toast("لم تتم إضافة موسيقى بعد");
+  if (audio.paused) playMusic(); else { audio.pause(); musicBtn.classList.remove("playing"); }
+});
+
+/* ---- reveal ---- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .15 });
+
+/* ---- countdown ---- */
+function tick() {
+  const diff = eventDate - new Date();
+  if (diff <= 0) { $("#countdown").outerHTML = `<p class="done-msg">اليوم يوم الفرح ${HRT}</p>`; return clearInterval(timer); }
+  $("#cd-d").textContent = Math.floor(diff / 864e5);
+  $("#cd-h").textContent = Math.floor(diff / 36e5) % 24;
+  $("#cd-m").textContent = Math.floor(diff / 6e4) % 60;
+  $("#cd-s").textContent = Math.floor(diff / 1e3) % 60;
+}
+const timer = setInterval(tick, 1000); tick();
+
+/* ---- save the date (.ics) ---- */
+$("#calBtn").addEventListener("click", () => {
+  const z = d => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const end = new Date(eventDate.getTime() + CONFIG.durationHours * 36e5);
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//wedding//AR","BEGIN:VEVENT",
+    "UID:" + Date.now() + "@wedding","DTSTAMP:" + z(new Date()),"DTSTART:" + z(eventDate),"DTEND:" + z(end),
+    `SUMMARY:زفاف ${CONFIG.groom} & ${CONFIG.bride}`,`LOCATION:${CONFIG.venueName} - ${CONFIG.venueAddress}`,
+    "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:تذكير بالحفل","END:VALARM",
+    "END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+  a.download = "wedding.ics"; a.click();
+  toast("تم حفظ الموعد ✓");
+});
+
+/* ---- wishes wall: Google Sheet wishes + this guest's own (shown instantly) ---- */
+let myWishes = [], sheetWishes = [];
+try { myWishes = JSON.parse(localStorage.getItem("myWishes")) || []; } catch {}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const wkey = w => `${w.name}|${w.text}`.trim();
+function renderWall() {
+  const mine = new Set(myWishes.map(wkey));
+  const all = [...myWishes.map(w => ({ ...w, mine: true })), ...sheetWishes.filter(w => !mine.has(wkey(w)))];
+  $("#wall").innerHTML = all.length
+    ? all.map(w => `<div class="wish${w.mine ? " mine" : ""}"><p>${esc(w.text)}</p><span>— ${esc(w.name)}</span></div>`).join("")
+    : `<p class="wall-empty">كن أول من يبارك للعروسين ${HRT}</p>`;
+}
+renderWall();
+if (CONFIG.sheetUrl) fetch(CONFIG.sheetUrl)
+  .then(r => r.json())
+  .then(list => { sheetWishes = Array.isArray(list) ? list : []; renderWall(); })
+  .catch(() => {});
+
+/* ---- RSVP + blessing → Google Sheet + WhatsApp ---- */
+const chips = $("#chips"), bmsg = $("#bmsg");
+if (guest) $("#gname").value = guest.trim();
+document.querySelectorAll("input[name=att]").forEach(r =>
+  r.addEventListener("change", () => $("#countWrap").style.display = $("#yes").checked ? "" : "none"));
+chips.innerHTML = CONFIG.blessings.map((b, i) => `<button type="button" class="chip" data-i="${i}">${b}</button>`).join("");
+chips.addEventListener("click", e => {
+  const c = e.target.closest(".chip"); if (!c) return;
+  chips.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+  bmsg.value = CONFIG.blessings[c.dataset.i];
+});
+bmsg.addEventListener("input", () => chips.querySelectorAll(".chip").forEach(x => x.classList.remove("on")));
+$("#rsvp").addEventListener("submit", e => {
+  e.preventDefault();
+  let msg = `السلام عليكم 🤍\nزفاف ${CONFIG.groom} & ${CONFIG.bride}\n\nالاسم: ${$("#gname").value.trim()}\n`;
+  msg += $("#yes").checked ? `✅ سأحضر بإذن الله\nعدد الأشخاص: ${$("#gcount").value}` : "❌ أعتذر عن الحضور";
+  const b = bmsg.value.trim();
+  if (b) {
+    msg += `\n\n💐 المباركة:\n${b}`;
+    myWishes.unshift({ name: $("#gname").value.trim(), text: b });
+    try { localStorage.setItem("myWishes", JSON.stringify(myWishes)); } catch {}
+    renderWall();
+  }
+  if (CONFIG.sheetUrl) fetch(CONFIG.sheetUrl, {
+    method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ name: $("#gname").value.trim(), attending: $("#yes").checked, count: $("#gcount").value, wish: b }),
+  }).catch(() => {});
+  hearts(e.submitter || e.target);
+  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, "_blank");
+  toast(`شكراً لك ${HRT}`);
+});
+function hearts(el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 12; i++) {
+    const h = document.createElement("span");
+    h.className = "heart"; h.textContent = ["💗", "💕", "💖", "✨"][i % 4];
+    h.style.left = r.left + r.width / 2 + (Math.random() * 60 - 30) + "px";
+    h.style.top = r.top + "px";
+    h.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+    h.style.animationDelay = i * 60 + "ms";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 2600);
+  }
+}
+
+function toast(t) {
+  const el = $("#toast"); el.innerHTML = t; el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+</script>
+</body>
+</html>
